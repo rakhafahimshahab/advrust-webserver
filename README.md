@@ -1,0 +1,3 @@
+# Reflection
+## Commit 1
+Before implementing handle_connection, our server simply established TCP connections without processing them, demonstrating only basic TCP/IP functionality. The addition of handle_connection enabled us to read and interpret HTTP requests, marking a crucial advancement in handling client-server interactions. By using a BufReader with the TcpStream, we efficiently parsed the text-based HTTP protocol.
