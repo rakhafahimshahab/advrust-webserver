@@ -7,3 +7,5 @@ The updated handle_connection method reads hello.html and construct an HTTP resp
 ## Commit 3
 ![Commit 3 screen capture](/assets/images/commit3.png)
 I added request validation, enabling it to distinguish between valid and invalid requests and respond with either the correct content or a 404 Not Found page. This is achieved by parsing the initial request line and deciding which HTML file to serve based on the request's target path. The server now serves hello.html for the root path (GET / HTTP/1.1) and bad.html for any other requests.
+## Commit 4
+This implements a slow request by adding a conditional delay for a specific route (/sleep), showcasing the server's behavior under load or slow processing conditions. By leveraging Rust's thread::sleep function, this emulate a resource-intensive operation or a slow network response, pausing the server's execution for ten seconds when the /sleep path is requested. This change highlights the synchronous nature of our server, where handling a slow request delays subsequent requests, illustrating a key limitation in scalability and responsiveness.
