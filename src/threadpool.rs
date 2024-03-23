@@ -15,19 +15,8 @@ enum Message {
 }
 
 impl ThreadPool {
-    pub fn new(size: usize) -> ThreadPool {
-        assert!(size > 0);
-
-        let (sender, receiver) = mpsc::channel();
-        let receiver = Arc::new(Mutex::new(receiver));
-
-        let mut workers = Vec::with_capacity(size);
-
-        for id in 0..size {
-            workers.push(Worker::new(id, Arc::clone(&receiver)));
-        }
-
-        ThreadPool { workers, sender }
+    fn new(size: usize) -> ThreadPool {
+        ThreadPoolBuilder::new().size(size).build()
     }
 
     pub fn execute<F>(&self, f: F)
@@ -80,5 +69,35 @@ impl Worker {
             id,
             thread: Some(thread),
         }
+    }
+}
+
+pub struct ThreadPoolBuilder {
+    size: Option<usize>,
+}
+
+impl ThreadPoolBuilder {
+    pub fn new() -> Self {
+        ThreadPoolBuilder { size: None }
+    }
+
+    pub fn size(mut self, size: usize) -> Self {
+        self.size = Some(size);
+        self
+    }
+
+    pub fn build(self) -> ThreadPool {
+        assert!(self.size.is_some(), "Size must be set before building the ThreadPool");
+
+        let (sender, receiver) = mpsc::channel();
+        let receiver = Arc::new(Mutex::new(receiver));
+        let size = self.size.unwrap();
+        let mut workers = Vec::with_capacity(size);
+
+        for id in 0..size {
+            workers.push(Worker::new(id, Arc::clone(&receiver)));
+        }
+
+        ThreadPool { workers, sender }
     }
 }
